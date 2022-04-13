@@ -9,7 +9,7 @@ font_size <- formats$local$font$size
 tidy <-
   xlsx_cells("./structure-june-eng-farmtypeseries-13dec18.xlsx") %>%
   dplyr::filter(sheet != "Metadata ", !is_blank, row >= 2L) %>%
-  nest(-sheet) %>%
+  nest(data = !c(sheet)) %>%
   mutate(data = map(data,
                     ~ .x %>%
                       behead("NNW", "header1") %>%

@@ -12,7 +12,7 @@ font_size <- formats$local$font$size
 livestock <-
   cells %>%
   dplyr::filter(sheet %in% c("Livestock (animals)", "Livestock (holdings)")) %>%
-  nest(-sheet) %>%
+  nest(data = !c(sheet)) %>%
   mutate(data = map(data,
                     ~ .x %>%
                       behead("NNW", "header1") %>%
@@ -22,7 +22,7 @@ livestock <-
                       behead("W", "areas") %>%
                       mutate(suppressed = if_else(is.na(character), FALSE, character == "#")) %>%
                       select(header1, header2, header3, year, areas, value = numeric, suppressed))) %>%
-  unnest()
+  unnest(cols = c(data))
 
 other <-
   cells %>%
@@ -30,7 +30,7 @@ other <-
                                "Livestock (animals)",
                                "Livestock (holdings)",
                                "Metadata "))) %>%
-  nest(-sheet) %>%
+  nest(data = !c(sheet)) %>%
   mutate(data = map(data,
                     ~ .x %>%
                       behead("NNW", "header1") %>%

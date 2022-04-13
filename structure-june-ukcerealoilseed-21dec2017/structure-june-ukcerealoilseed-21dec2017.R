@@ -21,7 +21,7 @@ tidy_sheet <- function(cells) {
                          behead("WNW", "region") %>%
                          mutate(suppressed = if_else(is.na(character), FALSE, character == "#")) %>%
                          select(unit, year, nation, country, region, value = numeric, suppressed))) %>%
-    unnest()
+    unnest(cols = c(cells))
 }
 
 formats <- xlsx_formats("./structure-june-ukcerealoilseed-21dec2017.xlsx")
@@ -33,6 +33,6 @@ cells <- # Sheet "UK cereal yields summary" is trivial.
   dplyr::filter(str_detect(sheet, "^Regional"),
                 !is_blank,
                 row >= 2L) %>%
-  nest(-sheet) %>%
+  nest(data = !c(sheet)) %>%
   mutate(data = map(data, tidy_sheet)) %>%
-  unnest()
+  unnest(cols = c(data))

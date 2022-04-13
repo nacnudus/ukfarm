@@ -17,7 +17,7 @@ bold <- formats$local$font$bold
 cells_1905_1975 <-
   cells %>%
   dplyr::filter(sheet >= "1905", sheet <= "1985") %>%
-  nest(-sheet) %>%
+  nest(data = !c(sheet)) %>%
   mutate(data = map(data,
                     ~ .x %>%
                       behead("N", "county") %>%
@@ -25,7 +25,7 @@ cells_1905_1975 <-
                       behead("W", "subtopic") %>%
                       mutate(suppressed  = if_else(is.na(character), FALSE, character == "#")) %>%
                       select(county, topic, subtopic, amount = numeric, suppressed))) %>%
-  unnest()
+  unnest(cols = c(data))
 
 # 1985 -------------------------------------------------------------------------
 
@@ -46,7 +46,7 @@ cells_1985 <-
 cells_2010_2013 <-
   cells %>%
   dplyr::filter(sheet %in% c("2010", "2013")) %>%
-  nest(-sheet) %>%
+  nest(data = !c(sheet)) %>%
   mutate(data = map(data,
                     ~ .x %>%
                       behead("NNW", "table") %>%
@@ -59,7 +59,7 @@ cells_2010_2013 <-
                       dplyr::filter(!is.na(region)) %>% # extraneous cells at bottom of 2010
                       mutate(suppressed  = if_else(is.na(character), FALSE, character == "#")) %>%
                       select(table, header1, header2, unit, year, region, la, amount = numeric, suppressed))) %>%
-  unnest()
+  unnest(cols = c(data))
 
 # 2011-2,2014-5 ----------------------------------------------------------
 
@@ -67,7 +67,7 @@ cells_2011_2_2014_5 <-
   cells %>%
   dplyr::filter(sheet %in% c("2011", "2012", "2014", "2015")) %>%
   dplyr::filter(row >= 2) %>%
-  nest(-sheet) %>%
+  nest(data = !c(sheet)) %>%
   mutate(data = map(data,
                     ~ .x %>%
                       behead("NNW", "table") %>%
@@ -76,7 +76,7 @@ cells_2011_2_2014_5 <-
                       behead("W", "region") %>%
                       mutate(suppressed  = if_else(is.na(character), FALSE, character == "#")) %>%
                       select(table, header1, header2, region, amount = numeric, suppressed))) %>%
-  unnest()
+  unnest(cols = c(data))
 
 # 2016 -------------------------------------------------------------------------
 

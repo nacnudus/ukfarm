@@ -7,7 +7,7 @@ tidy <-
   dplyr::filter(sheet != "Metadata",
                 !is_blank,
                 row >= 6L) %>%
-  nest(-sheet) %>%
+  nest(data = !c(sheet)) %>%
   mutate(data = map(data,
                     ~ .x %>%
                       behead("NNW", "header1") %>%
@@ -15,5 +15,4 @@ tidy <-
                       behead("W", "local_nature_partnership") %>%
                       mutate(suppressed = if_else(is.na(character), FALSE, character == "#")) %>%
                       select(header1, header2, local_nature_partnership, value = numeric))) %>%
-  unnest()
-
+  unnest(cols = c(data))

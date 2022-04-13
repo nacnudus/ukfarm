@@ -36,6 +36,6 @@ tidy_2008_2016 <-
   xlsx_cells("./defra-stats-foodfarm-landuselivestock-june-results-aonb-series-09nov17.xlsx") %>%
   dplyr::filter(sheet != "Metadata") %>%
   dplyr::filter(sheet != "2007") %>% # 2007 has a third row of column headers
-  nest(-sheet) %>%
+  nest(data = !c(sheet)) %>%
   mutate(data = map(data, tidy_sheet)) %>%
-  unnest()
+  unnest(cols = c(data))

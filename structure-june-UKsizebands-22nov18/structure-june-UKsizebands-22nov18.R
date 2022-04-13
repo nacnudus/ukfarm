@@ -27,5 +27,5 @@ tidy <-
                        behead("N", "unit") %>%
                        behead("WNW", "produce") %>%
                        behead("W", "size_statistic"))) %>%
-  unnest() %>%
+  unnest(cols = c(cells)) %>%
   select(farm_type, produce, size_statistic, year, metric, unit)
