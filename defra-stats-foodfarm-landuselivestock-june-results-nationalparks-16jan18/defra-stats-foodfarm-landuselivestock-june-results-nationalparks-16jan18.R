@@ -30,7 +30,7 @@ tidy_sheet <- function(cells) {
                                                    character == "#")) %>%
                        select(holding_type, metric, subgroup, unit, year,
                               value = numeric, suppressed))) %>%
-  unnest()
+  unnest(cols = c(cells))
 }
 
 formats <- xlsx_formats("./file.xlsx")
@@ -43,7 +43,7 @@ tidy <-
   dplyr::filter(!(sheet %in% c("Map", "Metadata")),
                 !is_blank,
                 row >= 7L) %>%
-  nest(-sheet) %>%
+  nest(data = !c(sheet)) %>%
   mutate(data = map(data, tidy_sheet)) %>%
-  unnest() %>%
+  unnest(cols = c(data)) %>%
   mutate_if(is.character, str_trim)
